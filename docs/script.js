@@ -138,6 +138,12 @@ function resolveImageUrl(item) {
     if (d.includes('branco')) return SUPABASE_BASE + 'Molho a Branco.png';
   }
 
+  if (n === 'tortas' && item.description && item.description.length) {
+    const d = normalize(item.description[0]);
+    if (d.includes('palmito')) return SUPABASE_BASE + 'Torta Palmito.png';
+    if (d.includes('frango') || d.includes('requeijao')) return SUPABASE_BASE + 'Torta Franco Requeijao.png';
+  }
+
   if (n === 'nhoque' && item.description && item.description.length) {
     const d = normalize(item.description[0]);
     if (d.includes('mandioca')) return SUPABASE_BASE + 'Nhoque de Madioca.png';
@@ -202,4 +208,3 @@ function initLogos() {
 }
 
 document.addEventListener('DOMContentLoaded', () => { initLogos(); renderCategories(); });
-
