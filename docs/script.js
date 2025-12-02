@@ -163,19 +163,110 @@ function buildWhatsAppLink(item) {
   return base + encodeURIComponent(msg);
 }
 
+function slugify(s) {
+  if (!s) return '';
+  return s.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'-').replace(/[^\w\-]/g,'').replace(/\-+/g,'-');
+}
+
+function computeCategoryTitle(subtitle) {
+  if (!subtitle) return 'Cardápio';
+  const s = subtitle.toLowerCase();
+  if (s.includes('porc')) return 'Opções de Porco';
+  if (s.includes('boi') || s.includes('bov')) return 'Opções Bovinas';
+  if (s.includes('frang')) return 'Opções de Frango';
+  if (s.includes('espec') || s.includes('fim')) return 'Especiais de Fim de Ano';
+  if (s.includes('acompanh')) return 'Acompanhamentos';
+  if (s.includes('massa') || s.includes('molh')) return 'Massas e Molhos';
+  if (s.includes('cervej') || s.includes('cerveja')) return 'Bebidas Alcoólicas';
+  if (s.includes('refriger')) return 'Bebidas Não Alcoólicas';
+  return subtitle;
+}
+
+function buildCategoryIndex() {
+  const heroInner = document.querySelector('.hero-inner');
+  if (!heroInner) return;
+  const data = getProcessedMenuData();
+
+  // collect unique labels in document order
+  const seen = new Set();
+  const labels = [];
+  data.forEach(cat => {
+    const label = computeCategoryTitle(cat.subtitle);
+    if (!seen.has(label)) { seen.add(label); labels.push(label); }
+  });
+
+  // preferred ordering (if present)
+  const preferred = ['Especiais de Fim de Ano','Opções Bovinas','Opções de Porco','Opções de Frango','Acompanhamentos','Massas e Molhos','Bebidas Alcoólicas','Bebidas Não Alcoólicas'];
+  const ordered = [];
+  preferred.forEach(p => { const i = labels.indexOf(p); if (i !== -1) { ordered.push(p); labels.splice(i,1); } });
+  labels.forEach(l => ordered.push(l));
+
+  // reuse placeholder if exists
+  let container = document.getElementById('category-index');
+  if (!container) { container = document.createElement('div'); heroInner.appendChild(container); }
+  container.className = 'category-index';
+  container.innerHTML = '';
+
+  const copy = document.createElement('p');
+  copy.className = 'category-index-copy';
+  copy.textContent = 'Escolha uma das opções ou role a página';
+
+  const sub = document.createElement('p');
+  sub.className = 'category-index-sub';
+  sub.textContent = 'Toque para ir direto ao que deseja reservar.';
+
+  const list = document.createElement('div');
+  list.className = 'category-index-list';
+
+  ordered.forEach(label => {
+    const a = document.createElement('a');
+    a.className = 'category-pill';
+    a.href = '#' + slugify(label);
+    a.textContent = label;
+    a.setAttribute('aria-label', 'Ir para ' + label);
+    list.appendChild(a);
+  });
+
+  container.append(copy, sub, list);
+}
+
+function getProcessedMenuData() {
+  const res = [];
+  const isMassas = s => !!s && s.toLowerCase().includes('massa') && s.toLowerCase().includes('molh');
+  let massas = null;
+  menuData.forEach(cat => {
+    if (isMassas(cat.subtitle)) {
+      if (!massas) { massas = { title: cat.title, subtitle: cat.subtitle, items: [] }; res.push(massas); }
+      if (cat.items && cat.items.length) massas.items = massas.items.concat(cat.items);
+    } else {
+      res.push(cat);
+    }
+  });
+  return res;
+}
+
 function renderCategories() {
   const el = document.getElementById('categories');
   const frag = document.createDocumentFragment();
-  menuData.forEach(category => {
+  const data = getProcessedMenuData();
+  data.forEach(category => {
     const wrap = document.createElement('div');
     wrap.className = 'category';
+    wrap.id = slugify(computeCategoryTitle(category.subtitle));
     const header = document.createElement('div');
     header.className = 'category-header';
-    const h2 = document.createElement('h2'); h2.className = 'category-title'; h2.textContent = category.title;
+    const h2 = document.createElement('h2'); h2.className = 'category-title'; h2.textContent = computeCategoryTitle(category.subtitle);
     const h3 = document.createElement('h3'); h3.className = 'category-subtitle'; h3.textContent = category.subtitle;
     header.append(h2, h3); wrap.appendChild(header);
     category.items.forEach(item => {
-      const card = document.createElement('div'); card.className = 'item';
+      // make the whole card the clickable link
+      const card = document.createElement('a');
+      card.className = 'item';
+      card.href = buildWhatsAppLink(item);
+      card.target = '_blank';
+      card.rel = 'noopener';
+      card.setAttribute('aria-label', 'Reservar ' + item.name);
+
       const media = document.createElement('div'); media.className = 'item-media';
       const img = document.createElement('img'); img.className = 'item-img'; img.alt = item.name; img.src = resolveImageUrl(item); img.onerror = () => { img.src = SUPABASE_LOGO_URL; };
       media.appendChild(img);
@@ -188,8 +279,9 @@ function renderCategories() {
         info.appendChild(desc);
       }
       const reserve = document.createElement('div');
-      const a = document.createElement('a'); a.className = 'reserve-btn'; a.href = buildWhatsAppLink(item); a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'clique aqui e reserve';
-      reserve.appendChild(a); info.appendChild(reserve);
+      // keep visual button but not as an <a> to avoid nested anchors
+      const btn = document.createElement('span'); btn.className = 'reserve-btn'; btn.textContent = 'clique aqui e reserve';
+      reserve.appendChild(btn); info.appendChild(reserve);
       const price = document.createElement('div'); price.className = 'price';
       const cur = document.createElement('span'); cur.className = 'price-cur'; cur.textContent = 'R$';
       const value = document.createElement('span'); value.className = 'price-value'; value.textContent = item.price;
@@ -207,4 +299,4 @@ function initLogos() {
   const footerLogo = document.getElementById('footer-logo'); if (footerLogo) { footerLogo.src = SUPABASE_LOGO_URL; footerLogo.onerror = () => { footerLogo.src = SUPABASE_LOGO_URL; } }
 }
 
-document.addEventListener('DOMContentLoaded', () => { initLogos(); renderCategories(); });
+document.addEventListener('DOMContentLoaded', () => { initLogos(); renderCategories(); buildCategoryIndex(); });
