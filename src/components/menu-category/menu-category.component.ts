@@ -28,6 +28,7 @@ export class MenuCategoryComponent {
       'chester recheado': 'Chester Recheado.png',
       'conchiglione': 'Conchiglione.png',
       'costela desossada': 'Costela Desossada.png',
+      'costela': 'Costela Desossada.png',
       'costelinha': 'Costelinha Suina.png',
       'costelinha suina': 'Costelinha Suina.png',
       'coxa com sobre coxa': 'Coxa com Sobre Coxa.png',
@@ -45,6 +46,7 @@ export class MenuCategoryComponent {
       'lagarto recheado': 'Lagarto Recheado.png',
       'lombo recheado': 'Lombo Recheado.png',
       'maionese': 'Maionese.png',
+      'salada de maionese': 'Maionese.png',
       'maminha recheada': 'Maminha Recheada.png',
       'porqueta': 'Porqueta.png',
       'porqueta pururuca': 'Porqueta.png',
@@ -72,6 +74,12 @@ export class MenuCategoryComponent {
       const d = normalize(item.description[0]);
       if (d.includes('mandioca')) return base + 'Nhoque de Madioca.png';
       if (d.includes('mandioquinha')) return base + 'Nhoque de Madioquinha.png';
+    }
+
+    if (n === 'tortas' && item.description && item.description.length) {
+      const d = normalize(item.description[0]);
+      if (d.includes('frango')) return base + 'Torta Franco Requeijao.png';
+      if (d.includes('palmito')) return base + 'Torta Palmito.png';
     }
 
     const file = fileByName[n];
