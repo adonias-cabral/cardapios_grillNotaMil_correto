@@ -5,6 +5,7 @@ export interface MenuItem {
   price: string;
   unit: string;
   imageUrl: string;
+  whatsappLink?: string;
 }
 
 export interface MenuCategory {
