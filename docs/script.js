@@ -7,7 +7,7 @@ const menuData = [
     { name: 'LOMBO RECHEADO', price: '95,00', unit: 'Kg', imageUrl: '' },
     { name: 'PORQUETA PURURUCA', price: '95,00', unit: 'Kg', imageUrl: '' },
     { name: 'LAGARTO RECHEADO', price: '110,00', unit: 'Kg', imageUrl: '' },
-    { name: 'MAMINHA RECHEADA', price: '130,00', unit: 'Kg', imageUrl: '' }
+    { name: 'MAMINHA RECHEADA', price: '110,00', unit: 'Kg', imageUrl: '' }
   ] },
   { title: 'MATE A SUA FOME', subtitle: 'CARNES DE BOI', items: [
     { name: 'COSTELA', description: ['DESOSSADA ASSADA NO BAFO'], price: '95,00', unit: 'Kg', imageUrl: '' },
