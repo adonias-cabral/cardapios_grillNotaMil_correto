@@ -1,6 +1,7 @@
 // Copiado de script.js para publicação em GitHub Pages (docs/)
 const SUPABASE_BASE = 'https://tkexuycidlzsafjjzbpd.supabase.co/storage/v1/object/public/Grill%20Nota%20Mil/cardapio_fim_ano_midias/';
 const SUPABASE_LOGO_URL = SUPABASE_BASE + 'Logo%20Centralizado.png';
+const LOCAL_BASE = 'img/';
 
 const menuData = [
   { title: 'MATE A SUA FOME', subtitle: 'ESPECIAIS FIM DE ANO', items: [
@@ -72,88 +73,97 @@ const menuData = [
 
 function normalize(s) { return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim(); }
 
-function resolveImageUrl(item) {
+function getFileStem(item) {
   const n = normalize(item.name);
   const fileByName = {
-    'canelone': 'Canelone.png',
-    'chester recheado': 'Chester Recheado.png',
-    'conchiglione': 'Conchiglione.png',
-    'costela desossada': 'Costela Desossada.png',
-    'costela': 'Costela Desossada.png',
-    'costelinha': 'Costelinha Suina.png',
-    'costelinha suina': 'Costelinha Suina.png',
-    'coxa com sobre coxa': 'Coxa com Sobre Coxa.png',
-    'cupim': 'Cupin.png',
-    'farofa caseira': 'Farofa Caseira.png',
-    'farofa natalina': 'Farofa Natalina.png',
-    'feijao tropeiro': 'Feijao Tropeiro.png',
-    'frango recheado': 'Frango Recheado.png',
-    'frango com batatas': 'Frango com Batatas.png',
-    'fraldinha': 'Fraudinha Assada.png',
-    'fraudinha assada': 'Fraudinha Assada.png',
-    'joelho': 'Joelho de Porco.png',
-    'joelho de porco': 'Joelho de Porco.png',
-    'lagarto recheado': 'Lagarto Recheado.png',
-    'lombo recheado': 'Lombo Recheado.png',
-    'maionese': 'Maionese.png',
-    'salada de maionese': 'Maionese.png',
-    'maminha recheada': 'Maminha Recheada.png',
-    'porqueta': 'Porqueta.png',
-    'porqueta pururuca': 'Porqueta.png',
-    'panceta': 'Panceta.png',
-    'panqueca': 'Panqueca.png',
-    'pernil': 'Pernil.png',
-    'salpicao': 'Salpicao.png',
-    'sofili': 'Sofili.png',
-    'sofioli': 'Sofili.png',
-    'tender c/ molho de maracuja': 'Tender com Molho de Maracuja.png',
-    'tender com molho de maracuja': 'Tender com Molho de Maracuja.png',
-    'torta franco requeijao': 'Torta Franco Requeijao.png',
-    'torta palmito': 'Torta Palmito.png',
-    'nhocao recheado': 'Nhocao Recheadp.png'
+    'canelone': 'Canelone',
+    'chester recheado': 'Chester Recheado',
+    'conchiglione': 'Conchiglione',
+    'costela desossada': 'Costela Desossada',
+    'costela': 'Costela Desossada',
+    'costelinha': 'Costelinha Suina',
+    'costelinha suina': 'Costelinha Suina',
+    'coxa com sobre coxa': 'Coxa com Sobre Coxa',
+    'cupim': 'Cupin',
+    'farofa caseira': 'Farofa Caseira',
+    'farofa natalina': 'Farofa Natalina',
+    'feijao tropeiro': 'Feijao Tropeiro',
+    'frango recheado': 'Frango Recheado',
+    'frango com batatas': 'Frango com Batatas',
+    'fraldinha': 'Fraudinha Assada',
+    'fraudinha assada': 'Fraudinha Assada',
+    'joelho': 'Joelho de Porco',
+    'joelho de porco': 'Joelho de Porco',
+    'lagarto recheado': 'Lagarto Recheado',
+    'lombo recheado': 'Lombo Recheado',
+    'maionese': 'Maionese',
+    'salada de maionese': 'Maionese',
+    'maminha recheada': 'Maminha Recheada',
+    'porqueta': 'Porqueta',
+    'porqueta pururuca': 'Porqueta',
+    'panceta': 'Panceta',
+    'panqueca': 'Panqueca',
+    'pernil': 'Pernil',
+    'salpicao': 'Salpicao',
+    'sofili': 'Sofili',
+    'sofioli': 'Sofili',
+    'tender c/ molho de maracuja': 'Tender com Molho de Maracuja',
+    'tender com molho de maracuja': 'Tender com Molho de Maracuja',
+    'torta franco requeijao': 'Torta Franco Requeijao',
+    'torta palmito': 'Torta Palmito',
+    'nhocao recheado': 'Nhocao Recheadp'
   };
 
   if (n === 'cervejas' && item.description && item.description.length) {
     const d = normalize(item.description[0]);
-    if (d.includes('long neck')) return SUPABASE_BASE + 'Cerveja Long.png';
+    if (d.includes('long neck')) return 'Cerveja Long';
   }
   if (n === 'cervejas lata' && item.description && item.description.length) {
     const d = normalize(item.description[0]);
-    if (d.includes('itaipava')) return SUPABASE_BASE + 'Cerveja Lata Itaipava.png';
-    if (d.includes('puro malte')) return SUPABASE_BASE + 'Cerveja Lata Puro malte.png';
-    if (d.includes('skol') && d.includes('brahma')) return SUPABASE_BASE + 'Ceveja Lata Skol e Brahama.png';
+    if (d.includes('itaipava')) return 'Cerveja Lata Itaipava';
+    if (d.includes('puro malte')) return 'Cerveja Lata Puro malte';
+    if (d.includes('skol') && d.includes('brahma')) return 'Ceveja Lata Skol e Brahama';
   }
   if (n === 'refrigerantes' && item.description && item.description.length) {
     const d = normalize(item.description[0]);
-    if (d.includes('2 litros') || d.includes('2l') || d.includes('2 l')) return SUPABASE_BASE + 'Refrigerantes 2l.png';
-    if (d.includes('600 ml') || d.includes('600ml')) return SUPABASE_BASE + 'Refriferante 600ml.png';
-    if (d.includes('mini')) return SUPABASE_BASE + 'Refrigerene Mini.png';
-    if (d.includes('lata')) return SUPABASE_BASE + 'Latas.png';
+    if (d.includes('2 litros') || d.includes('2l') || d.includes('2 l')) return 'Refrigerantes 2l';
+    if (d.includes('600 ml') || d.includes('600ml')) return 'Refriferante 600ml';
+    if (d.includes('mini')) return 'Refrigerene Mini';
+    if (d.includes('lata')) return 'Latas';
   }
 
   if (n === 'molhos' && item.description && item.description.length) {
     const d = normalize(item.description[0]);
-    if (d.includes('sugo')) return SUPABASE_BASE + 'Molho ao Sugo.png';
-    if (d.includes('bolonhesa') || d.includes('bolhonhesa')) return SUPABASE_BASE + 'Molho a Bolhonhesa.png';
-    if (d.includes('branco')) return SUPABASE_BASE + 'Molho a Branco.png';
+    if (d.includes('sugo')) return 'Molho ao Sugo';
+    if (d.includes('bolonhesa') || d.includes('bolhonhesa')) return 'Molho a Bolhonhesa';
+    if (d.includes('branco')) return 'Molho a Branco';
   }
 
   if (n === 'tortas' && item.description && item.description.length) {
     const d = normalize(item.description[0]);
-    if (d.includes('palmito')) return SUPABASE_BASE + 'Torta Palmito.png';
-    if (d.includes('frango') || d.includes('requeijao')) return SUPABASE_BASE + 'Torta Franco Requeijao.png';
+    if (d.includes('palmito')) return 'Torta Palmito';
+    if (d.includes('frango') || d.includes('requeijao')) return 'Torta Franco Requeijao';
   }
 
   if (n === 'nhoque' && item.description && item.description.length) {
     const d = normalize(item.description[0]);
-    if (d.includes('mandioca')) return SUPABASE_BASE + 'Nhoque de Madioca.png';
-    if (d.includes('mandioquinha')) return SUPABASE_BASE + 'Nhoque de Madioquinha.png';
-    if (d.includes('batata')) return SUPABASE_BASE + 'Nhoque.png';
+    if (d.includes('mandioca')) return 'Nhoque de Madioca';
+    if (d.includes('mandioquinha')) return 'Nhoque de Madioquinha';
+    if (d.includes('batata')) return 'Nhoque';
   }
 
-  const extra = { 'logo centralizado': 'Logo Centralizado.png', 'lazanha': 'Lazanha.png', 'lasanha': 'Lazanha.png' };
-  const file = fileByName[n] || extra[n];
-  return file ? (SUPABASE_BASE + file) : SUPABASE_LOGO_URL;
+  const extra = { 'logo centralizado': 'Logo Centralizado', 'lazanha': 'Lazanha', 'lasanha': 'Lazanha' };
+  return fileByName[n] || extra[n] || null;
+}
+
+function resolveLocalUrl(item) {
+  const stem = getFileStem(item);
+  return stem ? (LOCAL_BASE + stem + '.webp') : SUPABASE_LOGO_URL;
+}
+
+function resolveSupabaseUrl(item) {
+  const stem = getFileStem(item);
+  return stem ? (SUPABASE_BASE + stem + '.png') : SUPABASE_LOGO_URL;
 }
 
 function buildWhatsAppLink(item) {
@@ -268,7 +278,11 @@ function renderCategories() {
       card.setAttribute('aria-label', 'Reservar ' + item.name);
 
       const media = document.createElement('div'); media.className = 'item-media';
-      const img = document.createElement('img'); img.className = 'item-img'; img.alt = item.name; img.src = resolveImageUrl(item); img.onerror = () => { img.src = SUPABASE_LOGO_URL; };
+      const img = document.createElement('img'); img.className = 'item-img'; img.alt = item.name; img.loading = 'lazy'; img.decoding = 'async';
+      const localSrc = resolveLocalUrl(item);
+      const supSrc = resolveSupabaseUrl(item);
+      img.src = localSrc;
+      img.onerror = () => { if (!img.dataset.fb) { img.dataset.fb = '1'; img.src = supSrc; } else { img.src = SUPABASE_LOGO_URL; } };
       media.appendChild(img);
       const main = document.createElement('div'); main.className = 'item-main';
       const info = document.createElement('div'); info.className = 'item-info';
