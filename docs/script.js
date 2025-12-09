@@ -279,10 +279,16 @@ function renderCategories() {
 
       const media = document.createElement('div'); media.className = 'item-media';
       const img = document.createElement('img'); img.className = 'item-img'; img.alt = item.name; img.loading = 'lazy'; img.decoding = 'async';
-      const localSrc = resolveLocalUrl(item);
+      const stem = getFileStem(item);
+      const localPrimary = stem ? (LOCAL_BASE + stem + '.webp') : SUPABASE_LOGO_URL;
+      const localAlt = stem ? (LOCAL_BASE + stem.replace(/ /g, '_') + '.webp') : SUPABASE_LOGO_URL;
       const supSrc = resolveSupabaseUrl(item);
-      img.src = localSrc;
-      img.onerror = () => { if (!img.dataset.fb) { img.dataset.fb = '1'; img.src = supSrc; } else { img.src = SUPABASE_LOGO_URL; } };
+      img.src = localPrimary;
+      img.onerror = () => {
+        if (!img.dataset.tryAlt && localAlt !== localPrimary) { img.dataset.tryAlt = '1'; img.src = localAlt; return; }
+        if (!img.dataset.fb) { img.dataset.fb = '1'; img.src = supSrc; return; }
+        img.src = SUPABASE_LOGO_URL;
+      };
       media.appendChild(img);
       const main = document.createElement('div'); main.className = 'item-main';
       const info = document.createElement('div'); info.className = 'item-info';
